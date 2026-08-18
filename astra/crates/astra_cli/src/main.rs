@@ -1,6 +1,4 @@
-mod lexer;
-mod token;
-use lexer::Lexer;
+use astra_lexer::lexer::Lexer;
 
 fn main() {
     println!("Astra Compiler");

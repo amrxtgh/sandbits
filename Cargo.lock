@@ -9,6 +9,9 @@ version = "0.1.0"
 [[package]]
 name = "astra-cli"
 version = "0.1.0"
+dependencies = [
+ "astra-lexer",
+]
 
 [[package]]
 name = "astra-lexer"
