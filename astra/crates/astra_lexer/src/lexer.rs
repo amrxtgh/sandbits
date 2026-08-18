@@ -79,11 +79,11 @@ impl Lexer {
             }
             '{' => {
                 self.advance();
-                Token::RightBrac
+                Token::LeftBrac
             }
             '}' => {
                 self.advance();
-                Token::LeftBrac
+                Token::RightBrac
             }
             ',' => {
                 self.advance();
