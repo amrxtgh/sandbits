@@ -23,7 +23,11 @@ fn main() {
     println!("{source}");
     let mut buffer = Buffer::new();
     let mut lexer = Lexer::new(&source);
-    let tokens = lexer.lex();
+
+    // return one token
+    let tokens = lexer.next_token();
+
+    // put that shit in the buffer
     for token in tokens {
         buffer.push(token);
     }
