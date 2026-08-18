@@ -1,0 +1,8 @@
+[workspace]
+resolver = "3"
+
+members = [
+    "crates/astra-cli",
+    "crates/astra-lexer",
+    "crates/astra-ast",
+]
