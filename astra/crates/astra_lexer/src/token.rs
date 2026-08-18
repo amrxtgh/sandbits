@@ -22,6 +22,7 @@ pub enum Token {
     LeftBrac,
     RightBrac,
     Semicolon,
+    Comma,
 
     // Special
     EoF,
