@@ -1,5 +1,8 @@
+use astra_lexer::buffer::Buffer;
 use astra_lexer::lexer::Lexer;
+
 use std::{env, fs};
+
 fn main() {
     println!("Astra Compiler");
 
@@ -18,7 +21,11 @@ fn main() {
         }
     };
     println!("{source}");
+    let mut buffer = Buffer::new();
     let mut lexer = Lexer::new(&source);
     let tokens = lexer.lex();
-    println!("{tokens:#?}");
+    for token in tokens {
+        buffer.push(token);
+    }
+    println!("{:#?}", buffer);
 }
