@@ -85,6 +85,10 @@ impl Lexer {
                 self.advance();
                 Token::LeftBrac
             }
+            ',' => {
+                self.advance();
+                Token::Comma
+            }
             _ if c.is_ascii_alphabetic() || c == '_' => {
                 let text = self.read_identifier();
                 self.keyword_or_identifier(text)
@@ -99,15 +103,50 @@ impl Lexer {
         }
     }
     pub fn tokenize(&mut self) -> Buffer<Token> {
-        unimplemented!();
+        let mut tokens = Buffer::new();
+        loop {
+            let token = self.next_token();
+            let done = token == Token::EoF;
+
+            tokens.push(token);
+            if done {
+                break;
+            }
+        }
+        tokens
     }
+
     fn read_identifier(&mut self) -> String {
-        unimplemented!()
+        let start = self.position;
+
+        while let Some(c) = self.current() {
+            if c.is_ascii_alphabetic() || 'c' == '_' {
+                self.advance();
+            } else {
+                break;
+            }
+        }
+        self.source[start..self.position].iter().collect()
     }
     fn keyword_or_identifier(&self, text: String) -> Token {
-        unimplemented!();
+        match text.as_str() {
+            "let" => Token::Let,
+            "func" => Token::Func,
+            "return" => Token::Return,
+            _ => Token::Identifier(text),
+        }
     }
     fn read_number(&mut self) -> i64 {
-        unimplemented!();
+        let start = self.position;
+
+        while let Some(c) = self.current() {
+            if c.is_ascii_digit() {
+                self.advance();
+            } else {
+                break;
+            }
+        }
+        let text: String = self.source[start..self.position].iter().collect();
+        text.parse().expect("lexer produced invalud integer")
     }
 }
