@@ -1,4 +1,3 @@
-use astra_lexer::buffer::Buffer;
 use astra_lexer::lexer::Lexer;
 
 use std::{env, fs};
@@ -21,15 +20,8 @@ fn main() {
         }
     };
     println!("{source}");
-    let mut buffer = Buffer::new();
     let mut lexer = Lexer::new(&source);
+    let tokens = lexer.tokenize();
 
-    // return one token
-    let tokens = lexer.next_token();
-
-    // put that shit in the buffer
-    for token in tokens {
-        buffer.push(token);
-    }
-    println!("{:#?}", buffer);
+    println!("{:#?}", tokens);
 }
