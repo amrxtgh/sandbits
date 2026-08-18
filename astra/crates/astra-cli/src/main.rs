@@ -1,15 +1,11 @@
-pub struct Buffer<T> {
-    data: Vec<T>,
+mod lexer;
+mod token;
+use lexer::Lexer;
+
+fn main() {
+    println!("Astra Compiler");
+    let source = " = ; ";
+    let mut lexer = Lexer::new(source);
+    let tokens = lexer.lex();
+    println!("{tokens:#?}");
 }
-impl<T> Buffer<T> {
-    pub fn new() -> Self {
-        Self { data: Vec::new() }
-    }
-    pub fn push(&mut self, value: T) {
-        self.data.push(value);
-    }
-    pub fn len(&self) -> usize {
-        self.data.len()
-    }
-}
-fn main() {}
