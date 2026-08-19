@@ -20,15 +20,15 @@ impl Lexer {
         }
     }
     // what characters lexer is looking at
-    pub fn current(&self) -> Option<char> {
+    fn current(&self) -> Option<char> {
         self.source.get(self.position).copied()
     }
 
     // move to the next character
-    pub fn advance(&mut self) {
+    fn advance(&mut self) {
         self.position += 1;
     }
-    pub fn skip_whitespace(&mut self) {
+    fn skip_whitespace(&mut self) {
         while let Some(c) = self.current() {
             if c.is_whitespace() {
                 self.advance();
@@ -79,11 +79,11 @@ impl Lexer {
             }
             '{' => {
                 self.advance();
-                Token::LeftBrac
+                Token::LeftBrace
             }
             '}' => {
                 self.advance();
-                Token::RightBrac
+                Token::RightBrace
             }
             ',' => {
                 self.advance();
@@ -120,7 +120,7 @@ impl Lexer {
         let start = self.position;
 
         while let Some(c) = self.current() {
-            if c.is_ascii_alphabetic() || 'c' == '_' {
+            if c.is_ascii_alphabetic() || c == '_' {
                 self.advance();
             } else {
                 break;

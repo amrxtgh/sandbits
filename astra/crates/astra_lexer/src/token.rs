@@ -19,8 +19,8 @@ pub enum Token {
     // Punctuation
     LeftParen,
     RightParen,
-    LeftBrac,
-    RightBrac,
+    LeftBrace,
+    RightBrace,
     Semicolon,
     Comma,
 
