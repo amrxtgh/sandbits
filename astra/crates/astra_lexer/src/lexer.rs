@@ -118,6 +118,9 @@ impl Lexer {
         }
         Ok(tokens)
     }
+    fn read_string(&mut self) -> String {
+        unimplemented!();
+    }
 
     fn read_identifier(&mut self) -> String {
         let start = self.position;
