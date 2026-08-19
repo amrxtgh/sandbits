@@ -1,4 +1,5 @@
 use crate::buffer::Buffer;
+use crate::error::LexerError;
 use crate::token::Token;
 
 pub struct Lexer {
@@ -38,82 +39,84 @@ impl Lexer {
         }
     }
     // lets make lex produce tokens
-    pub fn next_token(&mut self) -> Token {
+    pub fn next_token(&mut self) -> Result<Token, LexerError> {
         self.skip_whitespace();
 
         let Some(c) = self.current() else {
-            return Token::EoF;
+            return Ok(Token::EoF);
         };
         match c {
             '=' => {
                 self.advance();
-                Token::Equal
+                Ok(Token::Equal)
             }
             ';' => {
                 self.advance();
-                Token::Semicolon
+                Ok(Token::Semicolon)
             }
             '+' => {
                 self.advance();
-                Token::Plus
+                Ok(Token::Plus)
             }
             '-' => {
                 self.advance();
-                Token::Minus
+                Ok(Token::Minus)
             }
             '*' => {
                 self.advance();
-                Token::Star
+                Ok(Token::Star)
             }
             '/' => {
                 self.advance();
-                Token::Slash
+                Ok(Token::Slash)
             }
             '(' => {
                 self.advance();
-                Token::LeftParen
+                Ok(Token::LeftParen)
             }
             ')' => {
                 self.advance();
-                Token::RightParen
+                Ok(Token::RightParen)
             }
             '{' => {
                 self.advance();
-                Token::LeftBrace
+                Ok(Token::LeftBrace)
             }
             '}' => {
                 self.advance();
-                Token::RightBrace
+                Ok(Token::RightBrace)
             }
             ',' => {
                 self.advance();
-                Token::Comma
+                Ok(Token::Comma)
             }
             _ if c.is_ascii_alphabetic() || c == '_' => {
                 let text = self.read_identifier();
-                self.keyword_or_identifier(text)
+                Ok(self.keyword_or_identifier(text))
             }
             _ if c.is_ascii_digit() => {
                 let number = self.read_number();
-                Token::Integer(number)
+                Ok(Token::Integer(number?))
             }
-            _ => {
-                panic!("unexpected character: {c}");
-            }
+            _ => Err(LexerError::UnexpectedChar {
+                char: c,
+                position: self.position,
+            }),
         }
     }
-    pub fn tokenize(&mut self) -> Buffer<Token> {
+    pub fn tokenize(&mut self) -> Result<Buffer<Token>, LexerError> {
         let mut tokens = Buffer::new();
         loop {
-            let token = self.next_token();
+            let token = self.next_token()?;
             let done = token == Token::EoF;
 
             tokens.push(token);
+
             if done {
                 break;
             }
         }
-        tokens
+        Ok(tokens)
     }
 
     fn read_identifier(&mut self) -> String {
@@ -136,7 +139,7 @@ impl Lexer {
             _ => Token::Identifier(text),
         }
     }
-    fn read_number(&mut self) -> i64 {
+    fn read_number(&mut self) -> Result<i64, LexerError> {
         let start = self.position;
 
         while let Some(c) = self.current() {
@@ -147,6 +150,12 @@ impl Lexer {
             }
         }
         let text: String = self.source[start..self.position].iter().collect();
-        text.parse().expect("lexer produced invalud integer")
+        match text.parse::<i64>() {
+            Ok(number) => Ok(number),
+            Err(_) => Err(LexerError::InvalidInteger {
+                string: text,
+                position: start,
+            }),
+        }
     }
 }
