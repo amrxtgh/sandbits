@@ -1,3 +1,5 @@
+use std::sync::mpsc::RecvTimeoutError;
+
 use crate::buffer::Buffer;
 use crate::error::LexerError;
 use crate::token::Token;
@@ -90,6 +92,10 @@ impl Lexer {
                 self.advance();
                 Ok(Token::Comma)
             }
+            '"' => {
+                let string = self.read_string()?;
+                Ok(Token::StringLiteral(string))
+            }
             _ if c.is_ascii_alphabetic() || c == '_' => {
                 let text = self.read_identifier();
                 Ok(self.keyword_or_identifier(text))
@@ -118,8 +124,19 @@ impl Lexer {
         }
         Ok(tokens)
     }
-    fn read_string(&mut self) -> String {
-        unimplemented!();
+    fn read_string(&mut self) -> Result<String, LexerError> {
+        self.advance();
+        let start = self.position;
+        while let Some(c) = self.current() {
+            if c == '"' {
+                let string: String = self.source[start..self.position].iter().collect();
+
+                self.advance();
+                return Ok(string);
+            }
+            self.advance();
+        }
+        Err(LexerError::UnterminatedString { position: start })
     }
 
     fn read_identifier(&mut self) -> String {
