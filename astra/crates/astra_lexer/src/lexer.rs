@@ -1,5 +1,3 @@
-use std::sync::mpsc::RecvTimeoutError;
-
 use crate::buffer::Buffer;
 use crate::error::LexerError;
 use crate::token::Token;
@@ -128,6 +126,7 @@ impl Lexer {
         self.advance();
         let start = self.position;
         while let Some(c) = self.current() {
+            // advance until
             if c == '"' {
                 let string: String = self.source[start..self.position].iter().collect();
 
