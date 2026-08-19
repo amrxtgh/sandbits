@@ -35,6 +35,11 @@ impl Lexer {
     fn advance(&mut self) {
         self.position += 1;
     }
+
+    // inspect the another character
+    fn peek(&self) -> Option<char> {
+        self.source.get(self.position + 1).copied()
+    }
     fn skip_whitespace(&mut self) {
         while let Some(c) = self.current() {
             if c.is_whitespace() {
@@ -129,6 +134,10 @@ impl Lexer {
         Ok(tokens)
     }
     fn read_string(&mut self) -> Result<String, LexerError> {
+        // add let mut result = String::new()'
+        // inside the loop handle all the 3 case closeing quite backslace normal
+        // at the end instead of the slicing the source , return result
+        // the start variable is onlt needded for now for teh error position not for slicing 
         self.advance();
         let start = self.position;
         while let Some(c) = self.current() {
