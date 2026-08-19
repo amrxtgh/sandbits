@@ -1,4 +1,4 @@
-let x = 69;
+let x = @;
 
 func (int a, int b) {
 	return a + b;

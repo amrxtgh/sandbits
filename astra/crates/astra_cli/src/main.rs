@@ -21,7 +21,12 @@ fn main() {
     };
     println!("{source}");
     let mut lexer = Lexer::new(&source);
-    let tokens = lexer.tokenize();
-
-    println!("{:#?}", tokens);
+    match lexer.tokenize() {
+        Ok(token) => {
+            println!("{:#?}", token);
+        }
+        Err(error) => {
+            eprintln!("lexer error: {error}");
+        }
+    }
 }
