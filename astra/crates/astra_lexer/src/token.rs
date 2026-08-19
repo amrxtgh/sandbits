@@ -1,3 +1,5 @@
+use lasso::Spur;
+
 #[derive(Debug, Clone, PartialEq)]
 pub enum Token {
     // Keywords
@@ -6,7 +8,7 @@ pub enum Token {
     Return,
 
     // values/names
-    Identifier(String),
+    Identifier(Spur),
     Integer(i64),
     StringLiteral(String),
 

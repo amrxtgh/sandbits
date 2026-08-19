@@ -24,6 +24,7 @@ pub fn run() {
     // returns char of tokens and pos
     let mut lexer = Lexer::new(&source);
     // do the tokenization
+    // tokenize return Result
     match lexer.tokenize() {
         Ok(token) => {
             println!("{:#?}", token);

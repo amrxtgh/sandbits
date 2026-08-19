@@ -1,5 +1,6 @@
 use crate::buffer::Buffer;
 use crate::error::LexerError;
+use crate::interner::Interner;
 use crate::token::Token;
 
 pub struct Lexer {
@@ -11,6 +12,10 @@ pub struct Lexer {
     // ^
     // then position = 0
     position: usize,
+
+    // here our lexer owns the interner so the interned strings belongs to the lifetime of that
+    // lexer
+    interner: Interner,
 }
 impl Lexer {
     // all the characters
@@ -18,6 +23,7 @@ impl Lexer {
         Self {
             source: source.chars().collect(),
             position: 0,
+            interner: Interner::new(),
         }
     }
     // what characters lexer is looking at
@@ -150,12 +156,15 @@ impl Lexer {
         }
         self.source[start..self.position].iter().collect()
     }
-    fn keyword_or_identifier(&self, text: String) -> Token {
+    fn keyword_or_identifier(&mut self, text: String) -> Token {
         match text.as_str() {
             "let" => Token::Let,
             "func" => Token::Func,
             "return" => Token::Return,
-            _ => Token::Identifier(text),
+            _ => {
+                let symbol = self.interner.intern(&text);
+                Token::Identifier(symbol)
+            }
         }
     }
     fn read_number(&mut self) -> Result<i64, LexerError> {
