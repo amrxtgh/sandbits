@@ -139,15 +139,23 @@ impl Lexer {
         let mut result = String::new();
 
         while let Some(c) = self.current() {
+            // get some character at the current lexer position
             match c {
                 '"' => {
+                    // found the closing quote of the string
                     self.advance();
+                    // consume the closing quote and move to the next character
                     return Ok(result);
+                    // the string is complete
                 }
                 '\\' => match self.peek() {
+                    // found the back slash
                     Some('n') => {
+                        // source contain "\n"
                         result.push('\n');
+                        // consume the \ character
                         self.advance();
+                        // consume the n character
                         self.advance();
                     }
                     Some('"') => {
@@ -167,6 +175,7 @@ impl Lexer {
                     }
                 },
                 _ => {
+                    // for normal character
                     result.push(c);
                     self.advance();
                 }
