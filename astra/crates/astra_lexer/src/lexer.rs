@@ -134,21 +134,43 @@ impl Lexer {
         Ok(tokens)
     }
     fn read_string(&mut self) -> Result<String, LexerError> {
-        // add let mut result = String::new()'
-        // inside the loop handle all the 3 case closeing quite backslace normal
-        // at the end instead of the slicing the source , return result
-        // the start variable is onlt needded for now for teh error position not for slicing 
         self.advance();
         let start = self.position;
-        while let Some(c) = self.current() {
-            // advance until
-            if c == '"' {
-                let string: String = self.source[start..self.position].iter().collect();
+        let mut result = String::new();
 
-                self.advance();
-                return Ok(string);
+        while let Some(c) = self.current() {
+            match c {
+                '"' => {
+                    self.advance();
+                    return Ok(result);
+                }
+                '\\' => match self.peek() {
+                    Some('n') => {
+                        result.push('\n');
+                        self.advance();
+                        self.advance();
+                    }
+                    Some('"') => {
+                        result.push('"');
+                        self.advance();
+                        self.advance();
+                    }
+                    Some('\\') => {
+                        result.push('\\');
+                        self.advance();
+                        self.advance();
+                    }
+                    _ => {
+                        return Err(LexerError::InvalidEscape {
+                            position: self.position,
+                        });
+                    }
+                },
+                _ => {
+                    result.push(c);
+                    self.advance();
+                }
             }
-            self.advance();
         }
         Err(LexerError::UnterminatedString { position: start })
     }
