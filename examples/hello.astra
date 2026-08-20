@@ -1,6 +1,16 @@
-let x = "hello world";
 let x = 69;
+let name = "hello world";
+let escaped = "line1\nline2";
+let quotes = "say \"hello\" to the world";
+let backslash = "path\\to\\file";
+let mixed = "hello\nworld\\end\"done\"";
 
-func (int a, int b) {
+func add(int a, int b) {
 	return a + b;
+}
+
+func main() {
+	let result = add(10, 20);
+	let msg = "result is: 30";
+	return result;
 }
