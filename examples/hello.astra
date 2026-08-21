@@ -10,6 +10,20 @@ let c = 3 < 5;
 let d = 10 > 3;
 let e = 5 <= 5;
 let f = 10 >= 11;
+if a == true {
+	return a;
+} else {
+	return b;
+}
+
+while a < 10 {
+	a = a + 1;
+}
+
+for i = 0, i < 10, i = i + 1 {
+	let x = i;
+}
+
 func add(int a, int b) {
 	return a + b;
 }
@@ -17,5 +31,13 @@ func add(int a, int b) {
 func main() {
 	let result = add(10, 20);
 	let msg = "result is: 30";
+	if result == 30 {
+		return true;
+	} else {
+		return false;
+	}
+	while result > 0 {
+		result = result - 1;
+	}
 	return result;
 }
