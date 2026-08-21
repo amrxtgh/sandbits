@@ -18,6 +18,12 @@ pub enum Token {
     Star,
     Slash,
     Equal,
+    EqualEqual,   // for ==
+    NotEqual,     // for !=
+    Less,         // for <
+    Greater,      // for >
+    LessEqual,    // for <=
+    GreaterEqual, // for >=
 
     // Punctuation
     LeftParen,
