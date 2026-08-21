@@ -237,9 +237,15 @@ impl Lexer {
     }
     fn keyword_or_identifier(&mut self, text: String) -> Token {
         match text.as_str() {
+            "if" => Token::If,
+            "else" => Token::Else,
+            "for" => Token::For,
+            "while" => Token::While,
             "let" => Token::Let,
             "func" => Token::Func,
             "return" => Token::Return,
+            "true" => Token::True,
+            "false" => Token::False,
             _ => {
                 let symbol = self.interner.intern(&text);
                 Token::Identifier(symbol)
