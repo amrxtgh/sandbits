@@ -117,8 +117,21 @@ impl Lexer {
                 Ok(Token::Star)
             }
             '/' => {
-                self.advance();
-                Ok(Token::Slash)
+                if self.peek() == Some('/') {
+                    self.advance();
+                    self.advance();
+                    while let Some(c) = self.current() {
+                        if c == '\n' {
+                            break;
+                        }
+                        self.advance();
+                    }
+                    // i use recursion for the first time lessgo dsa
+                    Ok(self.next_token()?)
+                } else {
+                    self.advance();
+                    Ok(Token::Slash)
+                }
             }
             '(' => {
                 self.advance();
