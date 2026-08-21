@@ -3,9 +3,15 @@ use lasso::Spur;
 #[derive(Debug, Clone, PartialEq)]
 pub enum Token {
     // Keywords
+    If,
+    Else,
+    While,
+    For,
     Let,
     Func,
     Return,
+    True,
+    False,
 
     // values/names
     Identifier(Spur),
