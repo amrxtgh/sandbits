@@ -58,9 +58,48 @@ impl Lexer {
         };
         match c {
             '=' => {
-                self.advance();
-                Ok(Token::Equal)
+                if self.peek() == Some('=') {
+                    self.advance();
+                    self.advance();
+                    Ok(Token::EqualEqual)
+                } else {
+                    self.advance();
+                    Ok(Token::Equal)
+                }
             }
+            '!' => {
+                if self.peek() == Some('=') {
+                    self.advance();
+                    self.advance();
+                    Ok(Token::NotEqual)
+                } else {
+                    Err(LexerError::UnexpectedChar {
+                        char: '!',
+                        position: self.position,
+                    })
+                }
+            }
+            '<' => {
+                if self.peek() == Some('=') {
+                    self.advance();
+                    self.advance();
+                    Ok(Token::LessEqual)
+                } else {
+                    self.advance();
+                    Ok(Token::Less)
+                }
+            }
+            '>' => {
+                if self.peek() == Some('=') {
+                    self.advance();
+                    self.advance();
+                    Ok(Token::GreaterEqual)
+                } else {
+                    self.advance();
+                    Ok(Token::Greater)
+                }
+            }
+
             ';' => {
                 self.advance();
                 Ok(Token::Semicolon)
