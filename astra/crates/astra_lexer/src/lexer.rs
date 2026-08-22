@@ -16,6 +16,9 @@ pub struct Lexer {
     // here our lexer owns the interner so the interned strings belongs to the lifetime of that
     // lexer
     interner: Interner,
+
+    line: usize,
+    column: usize,
 }
 impl Lexer {
     // all the characters
@@ -24,6 +27,8 @@ impl Lexer {
             source: source.chars().collect(),
             position: 0,
             interner: Interner::new(),
+            line: 1,
+            column: 1,
         }
     }
     // what characters lexer is looking at
@@ -33,6 +38,14 @@ impl Lexer {
 
     // move to the next character
     fn advance(&mut self) {
+        if let Some(c) = self.current() {
+            if c == '\n' {
+                self.line += 1;
+                self.column = 1;
+            } else {
+                self.column += 1;
+            }
+        }
         self.position += 1;
     }
 
@@ -74,8 +87,9 @@ impl Lexer {
                     Ok(Token::NotEqual)
                 } else {
                     Err(LexerError::UnexpectedChar {
-                        char: '!',
-                        position: self.position,
+                        character: '!',
+                        line: self.line,
+                        column: self.column,
                     })
                 }
             }
@@ -166,8 +180,9 @@ impl Lexer {
                 Ok(Token::Integer(number?))
             }
             _ => Err(LexerError::UnexpectedChar {
-                char: c,
-                position: self.position,
+                character: c,
+                line: self.line,
+                column: self.column,
             }),
         }
     }
@@ -187,7 +202,7 @@ impl Lexer {
     }
     fn read_string(&mut self) -> Result<String, LexerError> {
         self.advance();
-        let start = self.position;
+        let _start = self.position;
         let mut result = String::new();
 
         while let Some(c) = self.current() {
@@ -222,7 +237,8 @@ impl Lexer {
                     }
                     _ => {
                         return Err(LexerError::InvalidEscape {
-                            position: self.position,
+                            line: self.line,
+                            column: self.column,
                         });
                     }
                 },
@@ -233,7 +249,10 @@ impl Lexer {
                 }
             }
         }
-        Err(LexerError::UnterminatedString { position: start })
+        Err(LexerError::UnterminatedString {
+            line: self.line,
+            column: self.column,
+        })
     }
 
     fn read_identifier(&mut self) -> String {
@@ -280,7 +299,8 @@ impl Lexer {
             Ok(number) => Ok(number),
             Err(_) => Err(LexerError::InvalidInteger {
                 string: text,
-                position: start,
+                line: self.line,
+                column: self.column,
             }),
         }
     }
