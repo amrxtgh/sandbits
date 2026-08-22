@@ -186,6 +186,7 @@ impl Lexer {
             }),
         }
     }
+    // return the vector of Token
     pub fn tokenize(&mut self) -> Result<Buffer<Token>, LexerError> {
         let mut tokens = Buffer::new();
         loop {
@@ -303,5 +304,60 @@ impl Lexer {
                 column: self.column,
             }),
         }
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_let_token() {
+        let mut lexer = Lexer::new("12345");
+        let token = lexer.next_token().unwrap();
+        assert_eq!(token, Token::Integer(12345));
+    }
+    #[test]
+    fn lex_string_escape() {
+        let mut lexer = Lexer::new(r#""hello\nworld\"test\\path""#);
+        let token = lexer.next_token().unwrap();
+        assert_eq!(
+            token,
+            Token::StringLiteral("hello\nworld\"test\\path".into())
+        );
+    }
+    #[test]
+    fn lex_comparison_operators() {
+        let mut lexer = Lexer::new("== != < > <= >=");
+
+        assert_eq!(lexer.next_token().unwrap(), Token::EqualEqual);
+        assert_eq!(lexer.next_token().unwrap(), Token::NotEqual);
+        assert_eq!(lexer.next_token().unwrap(), Token::Less);
+        assert_eq!(lexer.next_token().unwrap(), Token::Greater);
+        assert_eq!(lexer.next_token().unwrap(), Token::LessEqual);
+        assert_eq!(lexer.next_token().unwrap(), Token::GreaterEqual);
+    }
+    #[test]
+    fn comments_are_skipped() {
+        let mut lexer = Lexer::new("10 // this is a comment\n20");
+
+        assert_eq!(lexer.next_token().unwrap(), Token::Integer(10));
+        assert_eq!(lexer.next_token().unwrap(), Token::Integer(20));
+    }
+    #[test]
+    fn invalid_escape_is_error() {
+        let mut lexer = Lexer::new(r#""hello\q""#);
+
+        let result = lexer.next_token();
+
+        assert!(matches!(result, Err(LexerError::InvalidEscape { .. })));
+    }
+    #[test]
+    fn unterminated_string_is_error() {
+        let mut lexer = Lexer::new(r#""hello"#);
+
+        let result = lexer.next_token();
+
+        assert!(matches!(result, Err(LexerError::UnterminatedString { .. })));
     }
 }
