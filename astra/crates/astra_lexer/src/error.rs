@@ -2,30 +2,61 @@ use std::fmt;
 
 #[derive(Debug)]
 pub enum LexerError {
-    UnexpectedChar { char: char, position: usize },
-    InvalidInteger { string: String, position: usize },
-    UnterminatedString { position: usize },
-    InvalidEscape { position: usize },
+    UnexpectedChar {
+        character: char,
+        line: usize,
+        column: usize,
+    },
+    InvalidInteger {
+        string: String,
+        line: usize,
+        column: usize,
+    },
+    UnterminatedString {
+        line: usize,
+        column: usize,
+    },
+    InvalidEscape {
+        line: usize,
+        column: usize,
+    },
 }
 
+// i need to check this
 impl fmt::Display for LexerError {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         match self {
-            LexerError::UnexpectedChar { char, position } => {
+            LexerError::UnexpectedChar {
+                character,
+                line,
+                column,
+            } => {
                 write!(
                     f,
-                    "unexpected character '{}' at position {}",
-                    char, position,
+                    "unexpected character '{}' at line '{}' column '{}'",
+                    character, line, column
                 )
             }
-            LexerError::InvalidInteger { string, position } => {
-                write!(f, "invalid integer '{}' at position {}", string, position)
+            LexerError::InvalidInteger {
+                string,
+                line,
+                column,
+            } => {
+                write!(
+                    f,
+                    "invalid integer '{}' at line '{}' column '{}'",
+                    string, line, column
+                )
             }
-            LexerError::UnterminatedString { position } => {
-                write!(f, "unterminated string starting at position {}", position)
+            LexerError::UnterminatedString { line, column } => {
+                write!(
+                    f,
+                    "unterminated string starting at line '{}' column '{}'",
+                    line, column
+                )
             }
-            LexerError::InvalidEscape { position } => {
-                write!(f, "Invalid escape at position {}", position)
+            LexerError::InvalidEscape { line, column } => {
+                write!(f, "Invalid escape at line '{}' column '{}'", line, column)
             }
         }
     }
